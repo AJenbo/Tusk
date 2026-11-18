@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `tusk-php check` now checks Blade views too when given a directory or the whole project, as the editor does.
 
+### Fixed
+
+- **Laravel facade aliases are known classes.** `Route::has('login')` in a Blade view, or `Cache::get()` in a file without a namespace, is no longer reported as `unknown-class`, and hover and go to definition lead to the class the alias stands for. This covers Laravel's default aliases, the `aliases` in `config/app.php` and the ones packages register in `extra.laravel.aliases` (such as Flux's `Flux`), except packages listed under `dont-discover`. An alias whose class isn't installed is still reported.
+
 ## [0.14.0] - 2026-11-13
 
 ### Added

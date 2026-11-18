@@ -32,12 +32,15 @@ type Bootstrapped struct {
 	Logger         *log.Logger
 	BuiltinProfile symbols.BuiltinProfile
 
-	Index          *symbols.Index
-	Container      *container.ContainerAnalyzer
-	RouteIndex     *frameworklaravel.RouteIndex
-	SymfonyRoutes  []frameworksymfony.Route
-	SchemaCache    *models.SchemaCache
-	Schema         *models.Schema
+	Index      *symbols.Index
+	Container  *container.ContainerAnalyzer
+	RouteIndex *frameworklaravel.RouteIndex
+	// Aliases are the Laravel class aliases (facades by short name), read
+	// with the Composer dependencies.
+	Aliases       *frameworklaravel.Aliases
+	SymfonyRoutes []frameworksymfony.Route
+	SchemaCache   *models.SchemaCache
+	Schema        *models.Schema
 }
 
 func New(opts Options) *Bootstrapped {
@@ -53,8 +56,11 @@ func New(opts Options) *Bootstrapped {
 	}
 
 	var routeIndex *frameworklaravel.RouteIndex
+	var aliases *frameworklaravel.Aliases
 	if opts.Framework == "laravel" {
 		routeIndex = frameworklaravel.NewRouteIndex(opts.RootPath)
+		aliases = frameworklaravel.NewAliases(opts.RootPath)
+		index.SetClassGenerator(aliases)
 	}
 
 	return &Bootstrapped{
@@ -66,6 +72,7 @@ func New(opts Options) *Bootstrapped {
 		Index:          index,
 		Container:      container.NewContainerAnalyzer(index, opts.RootPath, opts.Framework),
 		RouteIndex:     routeIndex,
+		Aliases:        aliases,
 		SchemaCache:    models.NewSchemaCache(),
 	}
 }
@@ -163,6 +170,10 @@ func (ws *Bootstrapped) IndexWorkspace() int {
 func (ws *Bootstrapped) IndexComposerDependencies() int {
 	if ws == nil {
 		return 0
+	}
+
+	if ws.Aliases != nil {
+		ws.Aliases.Load()
 	}
 
 	entries := composer.GetAutoloadPaths(ws.RootPath)
