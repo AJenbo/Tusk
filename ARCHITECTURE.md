@@ -195,7 +195,7 @@ Every feature goes through these, so completion, hover, definition, references, 
 
 Three sources, kept apart:
 
-1. **Native rules** (`checks`, run by `diagnostics`): unknown classes, functions and members, undefined and unused variables, unused imports and private members, argument counts, deprecations, unavailable builtins for the project's PHP version, invalid overrides, unreachable code, redundant types and nullsafe operators, unknown Eloquent columns and relations, and more. `checks` has no LSP types, so the same rules serve `tusk-php check` and MCP. Rule codes and their severities are configured as described in [docs/configuration.md](docs/configuration.md).
+1. **Native rules** (`checks`, run by `diagnostics`): unknown classes, functions and members, undefined and unused variables, unused imports and private members, argument counts, deprecations, unavailable builtins for the project's PHP version, invalid overrides, unreachable code, redundant types and nullsafe operators, unknown Eloquent columns and relations, and more. `checks` has no LSP types, so the same rules serve `tusk-php check` and MCP. Every rule, its default severity and how to change it are in [docs/diagnostics.md](docs/diagnostics.md).
    - Cheap rules run after the 200 ms pause on the edited file only.
    - Heavier, type-aware rules run on save (`AnalyzeOnSave`); `tusk-php check` and MCP run both tiers.
 2. **PHPStan**, on save, when the project has it: its JSON output, with ranges narrowed to the identifier each message names.
